@@ -93,9 +93,8 @@ app.post("/login", async (req, res) => {
 		isPasswordTrue = await bcrypt.compare(password, user.password);
 		try {
 			if (isPasswordTrue) {
-				const checked = user.checked;
 				const token = jwt.sign(user.id, process.env.JWT_SECRET);
-				return res.status(200).json({ token, checked });
+				return res.status(200).json({ token });
 			} else return res.status(400).json({ error: "Wrong Email or Password!" });
 		} catch (err) {
 			res.status(400).json({ error: "Error Logging In! Please try Again!" });
@@ -103,6 +102,11 @@ app.post("/login", async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ error: "Error Logging In! Please try Again!" });
 	}
+});
+
+app.get("/profile", verifyToken, async (req, res) => {
+	if (verifyToken) return res.status(200).json({ checked: req.user.checked });
+	else return res.status(400).json({ error: "Not a Valid User!" });
 });
 
 app.patch("/check", verifyToken, async (req, res) => {
