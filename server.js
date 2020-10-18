@@ -105,8 +105,9 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/profile", verifyToken, async (req, res) => {
-	if (verifyToken) return res.status(200).json({ checked: req.user.checked });
-	else return res.status(400).json({ error: "Not a Valid User!" });
+	if (verifyToken)
+		return res.status(200).json({ checked: req.user.checked, message: "true" });
+	else return res.status(400).json({ message: "false" });
 });
 
 app.patch("/check", verifyToken, async (req, res) => {
