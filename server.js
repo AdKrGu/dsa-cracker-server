@@ -107,7 +107,7 @@ app.post("/login", async (req, res) => {
 app.get("/profile", verifyToken, async (req, res) => {
 	if (verifyToken)
 		return res.status(200).json({ checked: req.user.checked, message: "true" });
-	else return res.status(400).json({ message: "false" });
+	else return res.status(400).json({ error: "false" });
 });
 
 app.patch("/check", verifyToken, async (req, res) => {
@@ -122,7 +122,11 @@ app.patch("/check", verifyToken, async (req, res) => {
 		}
 	).exec((err, result) => {
 		if (err) return res.status(400).json({ error: "Error while checking!" });
-		else return res.status(200).json({ message: "Question Marked Completed!" });
+		else
+			return res.status(200).json({
+				message: "Question Marked Completed!",
+				result: result.checked,
+			});
 	});
 });
 
@@ -138,7 +142,10 @@ app.patch("/uncheck", verifyToken, async (req, res) => {
 		}
 	).exec((err, result) => {
 		if (err) return res.status(400).json({ error: "Error while unchecking!" });
-		else return res.status(200).json({ message: "Question Unmarked!" });
+		else
+			return res
+				.status(200)
+				.json({ message: "Question Unmarked!", result: result.checked });
 	});
 });
 
