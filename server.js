@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const morgan = require("morgan");
 const Users = require("./Models/Users");
+const Solutions = require("./Models/Solutions");
 const PORT = process.env.PORT;
 
 const app = express();
@@ -38,6 +39,26 @@ const verifyToken = async (req, res, next) => {
 mongoose.connect(process.env.MONGO_URI, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
+});
+
+app.post("/upload", verifyToken, async (req, res) => {
+	if (!req.body.confirmEmail || !req.body.solution || !req.body.quesId)
+		return { error: "Please fill all the fields!" };
+
+	const email = req.user.email;
+	const { confirmEmail, solution, quesId } = req.body;
+
+	const newSolution = new Solutions({ email, confirmEmail, solution, quesId });
+	const submitSolution = await newSolution.save();
+	try {
+		if (submitSolution)
+			return res
+				.status(200)
+				.json({ message: "Solution Submitted Successfully!" });
+		else return res.status(400).json({ message: "Error Submitting Solution!" });
+	} catch (err) {
+		return res.status(400).json({ message: "Error Submitting Solution!" });
+	}
 });
 
 app.post("/register", async (req, res) => {

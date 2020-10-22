@@ -14,6 +14,10 @@ const Users = new Schema({
 		type: [{ type: String }],
 		default: null,
 	},
+	subscribed: {
+		type: Boolean,
+		default: true,
+	},
 	joined: {
 		type: Date,
 		default: Date.now,
