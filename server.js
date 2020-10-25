@@ -52,12 +52,18 @@ app.post("/upload", verifyToken, async (req, res) => {
 	const submitSolution = await newSolution.save();
 	try {
 		if (submitSolution)
-			return res
-				.status(200)
-				.json({ message: "Solution Submitted Successfully!" });
-		else return res.status(400).json({ message: "Error Submitting Solution!" });
+			return res.status(200).json({
+				message:
+					"Thanks for submitting solution! We will review your solution and get back to you via mail!",
+			});
+		else
+			return res	
+				.status(400)
+				.json({ message: "Error Submitting Solution. Please try again!" });
 	} catch (err) {
-		return res.status(400).json({ message: "Error Submitting Solution!" });
+		return res
+			.status(400)
+			.json({ message: "Error Submitting Solution! Please try again!" });
 	}
 });
 
