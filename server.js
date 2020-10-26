@@ -39,6 +39,7 @@ const verifyToken = async (req, res, next) => {
 mongoose.connect(process.env.MONGO_URI, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
+	useFindAndModify: false,
 });
 
 app.post("/upload", verifyToken, async (req, res) => {
@@ -184,7 +185,20 @@ app.patch("/unsubscribe", async (req, res) => {
 			return res.status(400).json({ message: "Error while checking user!" });
 		else
 			return res.status(200).json({
-				message: "User Unsubscribed Successfully!",
+				message: "We are depressed to see you go :(",
+			});
+	});
+});
+
+app.patch("/subscribe", async (req, res) => {
+	Users.findByIdAndUpdate(req.body.id, {
+		$set: { subscribed: true },
+	}).exec((err, result) => {
+		if (err)
+			return res.status(400).json({ message: "Error while checking user!" });
+		else
+			return res.status(200).json({
+				message: "We are happy to welcome you back into the clan :)",
 			});
 	});
 });
