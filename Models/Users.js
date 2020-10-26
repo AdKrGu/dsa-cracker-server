@@ -18,6 +18,10 @@ const Users = new Schema({
 		type: Boolean,
 		default: true,
 	},
+	verified: {
+		type: Boolean,
+		default: false,
+	},
 	joined: {
 		type: Date,
 		default: Date.now,

@@ -57,7 +57,7 @@ app.post("/upload", verifyToken, async (req, res) => {
 					"Thanks for submitting solution! We will review your solution and get back to you via mail!",
 			});
 		else
-			return res	
+			return res
 				.status(400)
 				.json({ message: "Error Submitting Solution. Please try again!" });
 	} catch (err) {
@@ -173,6 +173,19 @@ app.patch("/uncheck", verifyToken, async (req, res) => {
 			return res
 				.status(200)
 				.json({ message: "Question Unmarked!", result: result.checked });
+	});
+});
+
+app.patch("/unsubscribe", async (req, res) => {
+	Users.findByIdAndUpdate(req.body.id, {
+		$set: { subscribed: false },
+	}).exec((err, result) => {
+		if (err)
+			return res.status(400).json({ message: "Error while checking user!" });
+		else
+			return res.status(200).json({
+				message: "User Unsubscribed Successfully!",
+			});
 	});
 });
 
