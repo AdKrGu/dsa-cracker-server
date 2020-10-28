@@ -178,29 +178,36 @@ app.patch("/uncheck", verifyToken, async (req, res) => {
 });
 
 app.patch("/unsubscribe", async (req, res) => {
-	Users.findByIdAndUpdate(req.body.id, {
-		$set: { subscribed: false },
-	}).exec((err, result) => {
-		if (err)
-			return res.status(400).json({ message: "Error while checking user!" });
-		else
-			return res.status(200).json({
-				message: "We are depressed to see you go :(",
-			});
-	});
-});
+	const { email, password } = req.body;
 
-app.patch("/subscribe", async (req, res) => {
-	Users.findByIdAndUpdate(req.body.id, {
-		$set: { subscribed: true },
-	}).exec((err, result) => {
-		if (err)
-			return res.status(400).json({ message: "Error while checking user!" });
-		else
-			return res.status(200).json({
-				message: "We are happy to welcome you back into the clan :)",
-			});
-	});
+	const user = await Users.findOne({ email });
+	try {
+		if (!user)
+			return res.status(400).json({ message: "Wrong Email or Password!" });
+
+		isPasswordTrue = await bcrypt.compare(password, user.password);
+		try {
+			if (isPasswordTrue) {
+				Users.findByIdAndUpdate(req.body.id, {
+					$set: { subscribed: false },
+				}).exec((err, result) => {
+					if (err)
+						return res
+							.status(400)
+							.json({ message: "Error while checking user!" });
+					else
+						return res.status(200).json({
+							message: "We are depressed to see you go :(",
+						});
+				});
+			} else
+				return res.status(400).json({ message: "Wrong Email or Password!" });
+		} catch (err) {
+			res.status(400).json({ message: "Error while checking user!" });
+		}
+	} catch (err) {
+		res.status(400).json({ message: "Error while checking user!" });
+	}
 });
 
 app.listen(PORT);
